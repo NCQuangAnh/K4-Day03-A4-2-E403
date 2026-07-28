@@ -3,15 +3,43 @@
 
 ---
 
+## 📍 0. MỐC 1 — ĐỊNH HÌNH BÀI TOÁN (Chủ đề #10)
+
+**Chủ đề đã chọn**: *Trợ Lý Tìm & Đặt Lịch Xem Nhà Trọ / Căn Hộ Cho Thuê*
+
+Người dùng cần tìm phòng trọ/căn hộ theo tiêu chí (khu vực, ngân sách, loại phòng), xem chi tiết tin đăng, kiểm tra khung giờ còn trống và đặt lịch hẹn xem nhà trực tiếp với chủ nhà.
+
+### 🛠️ Danh sách Tool dự kiến (`src/tools.py` — Role 2)
+
+| # | Tên Tool | Chức năng |
+| :---: | :--- | :--- |
+| 1 | `search_listings` | Tìm phòng trọ/căn hộ theo khu vực, ngân sách, loại phòng |
+| 2 | `get_listing_detail` | Lấy chi tiết một tin đăng (giá, diện tích, tiện ích, chủ nhà) |
+| 3 | `check_viewing_slots` | Kiểm tra các khung giờ còn trống để xem nhà |
+| 4 | `book_viewing` | Đặt lịch hẹn xem nhà (side-effect: ghi nhận booking) |
+| 5 | `cancel_viewing` | Hủy lịch hẹn đã đặt trước đó |
+
+### ⚠️ Failure Modes dự kiến (Role 3)
+
+| Tình huống lỗi | Cách tool nên phản hồi |
+| :--- | :--- |
+| Khu vực/quận không có trong dữ liệu | Trả chuỗi lỗi: *"Không tìm thấy khu vực '...'"* |
+| Ngân sách quá thấp, không có tin phù hợp | Trả chuỗi: *"Không có tin đăng phù hợp ngân sách"* |
+| `listing_id` không tồn tại | Trả chuỗi: *"Tin đăng không tồn tại"* |
+| Khung giờ đã có người đặt / nằm trong quá khứ | Trả chuỗi: *"Khung giờ không khả dụng, vui lòng chọn giờ khác"* |
+| Thiếu thông tin liên hệ khi đặt lịch | Trả chuỗi yêu cầu bổ sung, không crash chương trình |
+
+---
+
 ## 🎯 1. BẢNG CHẤM ĐIỂM AGENTIC FIT (SCORING MATRIX)
 
 | Tiêu chí | Điểm (1-5) | Lý do đánh giá |
 | :--- | :---: | :--- |
-| 🧠 **Multi-step Reasoning** | `4/5` | Cần suy luận từ tra cứu thời tiết đến chọn trang phục. |
-| 🛠️ **Tool Interaction** | `5/5` | Cần tra cứu dữ liệu thời gian thực qua API thời tiết/chuyến bay. |
-| 🔀 **Dynamic Decision** | `4/5` | Kết quả bước trước quyết định hành động bước sau. |
-| ⏳ **Long Horizon** | `3/5` | Quy trình gồm 2-3 bước xử lý ngắn. |
-| **TỔNG ĐIỂM FIT** | **16/20** | **KẾT LUẬN: BÀI TOÁN RẤT NÊN DÙNG REACT AGENT!** |
+| 🧠 **Multi-step Reasoning** | `4/5` | Cần suy luận từ tìm phòng đúng tiêu chí đến chọn khung giờ và xác nhận đặt lịch. |
+| 🛠️ **Tool Interaction** | `5/5` | Cần tra cứu dữ liệu tin đăng thời gian thực và ghi nhận đặt lịch (có side-effect). |
+| 🔀 **Dynamic Decision** | `4/5` | Kết quả tìm kiếm (có/không có phòng phù hợp) quyết định bước tiếp theo (đổi tiêu chí hay đặt lịch). |
+| ⏳ **Long Horizon** | `4/5` | Quy trình gồm 3-4 bước: tìm kiếm ➔ xem chi tiết ➔ kiểm tra lịch trống ➔ đặt lịch. |
+| **TỔNG ĐIỂM FIT** | **17/20** | **KẾT LUẬN: BÀI TOÁN RẤT NÊN DÙNG REACT AGENT!** |
 
 ---
 
