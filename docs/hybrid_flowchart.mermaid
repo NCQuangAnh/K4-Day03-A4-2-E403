@@ -1,0 +1,29 @@
+flowchart TD
+    A(["Người dùng đặt câu hỏi"]) --> B{"Câu hỏi có cần tra cứu dữ liệu<br/>tin đăng / lịch xem nhà thời gian thực<br/>hoặc thực hiện thao tác (đặt/hủy lịch) không?"}
+
+    B -- "KHÔNG<br/>(kiến thức chung: pháp lý, so sánh loại phòng,<br/>kinh nghiệm thuê nhà...)" --> C["💬 CHATBOT BASELINE PATH"]
+    C --> C1["1 LLM call duy nhất<br/>system prompt: CHATBOT_BASELINE_PROMPT"]
+    C1 --> C2["Trả lời trực tiếp từ<br/>kiến thức sẵn có của LLM<br/>(không gọi Tool)"]
+    C2 --> Z(["🏁 Trả lời người dùng"])
+
+    B -- "CÓ<br/>(tìm phòng, xem chi tiết, kiểm tra lịch trống,<br/>đặt/hủy lịch xem nhà...)" --> D["🤖 REACT AGENT PATH"]
+    D --> D1["Thought: suy luận bước tiếp theo,<br/>xác định Tool cần gọi"]
+    D1 --> D2["Action: gọi đúng 1 Tool trong AVAILABLE_TOOLS<br/>search_listings / get_listing_detail /<br/>check_viewing_slots / book_viewing / cancel_viewing"]
+    D2 --> D3["Observation: kết quả THẬT<br/>được ứng dụng chèn vào (không phải LLM tự bịa)"]
+    D3 --> D4{"Đã đủ thông tin<br/>để trả lời chưa?"}
+    D4 -- "Chưa đủ,<br/>cần thêm bước" --> D5{"Đã chạm giới hạn<br/>MAX_ITERATIONS chưa?"}
+    D5 -- "Chưa" --> D1
+    D5 -- "Rồi" --> G["GUARDRAIL TRIGGERED<br/>Ngắt vòng lặp an toàn,<br/>trả lời Safe Fallback lịch sự"]
+    G --> Z
+    D4 -- "Đủ rồi" --> F["Final Answer<br/>Grounded 100% từ Observation thật"]
+    F --> Z
+
+    classDef baseline fill:#eaf1ff,stroke:#2563eb,stroke-width:1.5px,color:#1d4ed8;
+    classDef agent fill:#e8f9ee,stroke:#16a34a,stroke-width:1.5px,color:#0f9d58;
+    classDef guardrail fill:#fff7ed,stroke:#d97706,stroke-width:1.5px,color:#7c2d12;
+    classDef endpoint fill:#f7f9fb,stroke:#6b7385,color:#1a1f2b;
+
+    class C,C1,C2 baseline;
+    class D,D1,D2,D3,D4,D5,F agent;
+    class G guardrail;
+    class A,Z endpoint;
