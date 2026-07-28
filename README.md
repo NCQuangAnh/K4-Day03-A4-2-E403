@@ -32,7 +32,11 @@ Bài Lab giúp bạn hiểu rõ sự tiến hóa qua 4 cấp độ của hệ th
 ├── 📁 src/                      <-- 💻 MÃ NGUỒN PYTHON (BOILERPLATE)
 │   ├── 📄 tools.py              <-- 🛠️ [Role 2] Khai báo các công cụ (Tools)
 │   ├── 📄 prompts.py            <-- 🧠 [Role 3] ReAct System Prompt & Guardrails
-│   └── 📄 app.py                <-- 🚀 [Role 4] Core App ghép nối & chạy ReAct Loop
+│   ├── 📄 app.py                <-- 🚀 [Role 4] Core App ghép nối & chạy ReAct Loop (CLI)
+│   ├── 📄 providers.py          <-- 🔌 Multi-Provider LLM Adapter (Gemini/OpenAI/Anthropic/OpenRouter)
+│   ├── 📄 web_app.py            <-- 🌐 Web UI để test Baseline vs ReAct Agent trên localhost
+│   ├── 📁 templates/            <-- 🖼️ Giao diện HTML của Web UI
+│   └── 📁 static/               <-- 🎨 CSS/JS của Web UI
 │
 └── 📁 docs/                     <-- 📚 TÀI LIỆU HƯỚNG DẪN & BÁO CÁO
     ├── 📄 CODELAB.md            <-- 🎓 [LMS Format] Hướng dẫn thực hành từng bước Codelab
@@ -56,7 +60,40 @@ timeline
 
 ---
 
-### 💯 4. CƠ CHẾ CHẤM ĐIỂM  (SCORING RUBRIC)
+### 🌐 4. CHẠY GIAO DIỆN WEB ĐỂ TEST TRÊN LOCALHOST
+
+Ngoài chạy CLI (`python src/app.py`), dự án có sẵn 1 giao diện web đơn giản để test trực quan Chatbot Baseline và ReAct Agent trên trình duyệt.
+
+**Bước 1 — Cài đặt môi trường** (bỏ qua nếu đã làm ở phần Setup):
+
+```bash
+python -m venv .venv
+source .venv/bin/activate        # Windows PowerShell: .venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+cp .env.example .env             # rồi điền API Key thật vào .env
+```
+
+**Bước 2 — Khởi động server:**
+
+```bash
+python src/web_app.py
+```
+
+**Bước 3 — Mở trình duyệt:** truy cập [http://127.0.0.1:5000](http://127.0.0.1:5000)
+
+**Giao diện gồm**:
+- **Sidebar trái**: danh sách toàn bộ Test Cases từ `config/test_cases.json` — bấm vào 1 câu là tự điền và gửi luôn.
+- **3 chế độ** (tab trên cùng):
+  - 💬 **Chatbot Baseline** — chỉ 1 LLM call, không gọi Tool.
+  - 🤖 **ReAct Agent** — hiển thị timeline từng bước `Thought → Action → Observation` thật, cùng banner Guardrail nếu Agent chạm `MAX_ITERATIONS`.
+  - ⚖️ **So sánh cả hai** — chạy song song 2 chế độ trên cùng 1 câu hỏi để thấy rõ khác biệt (đặc biệt là các câu hallucination như Test #3, #4).
+- Nếu API Provider hết quota/sai key, giao diện tự nhận diện và hiện banner lỗi ngắn gọn thay vì crash hay in nguyên JSON lỗi.
+
+> 💡 File `src/web_app.py` chỉ **tái sử dụng** logic thật từ `tools.py`, `prompts.py`, `app.py` — không thay đổi hành vi ReAct Loop, chỉ hiển thị trực quan hơn trên web.
+
+---
+
+### 💯 5. CƠ CHẾ CHẤM ĐIỂM  (SCORING RUBRIC)
 
 | Tiêu chí                                |  Trọng số  | Mô tả chi tiết                                                                                                             | Bằng chứng kiểm tra (Artifacts)                                        |
 | :---------------------------------------- | :-----------: | :---------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------ |
