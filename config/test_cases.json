@@ -2,31 +2,43 @@
   {
     "id": 1,
     "category": "🟢 Đơn giản (Chỉ cần LLM)",
-    "question": "Thủ đô của Việt Nam là gì?",
-    "expected_behavior": "Chatbot trả lời trực tiếp từ kiến thức có sẵn."
+    "question": "Khi thuê phòng trọ hoặc căn hộ dịch vụ, người thuê cần kiểm tra những yếu tố pháp lý và chi phí phát sinh nào?",
+    "expected_behavior": "Chatbot trả lời trực tiếp từ kiến thức có sẵn về hợp đồng thuê nhà, tiền cọc, chi phí dịch vụ (điện, nước, vệ sinh, giữ xe)."
   },
   {
     "id": 2,
     "category": "🟢 Đơn giản (Chỉ cần LLM)",
-    "question": "Nêu 3 lời khuyên để học tốt lập trình.",
-    "expected_behavior": "Chatbot trả lời trực tiếp từ kiến thức có sẵn."
+    "question": "Với ngân sách khoảng 5 triệu/tháng tại Hà Nội, tôi nên chọn thuê phòng trọ khép kín hay căn hộ mini?",
+    "expected_behavior": "Chatbot phân tích, so sánh ưu nhược điểm của 2 loại hình dựa trên kiến thức có sẵn."
   },
   {
     "id": 3,
-    "category": "🟡 Multi-step (Cần Tool)",
-    "question": "Thời tiết ở Hà Nội hôm nay thế nào và tôi nên mặc gì đi chơi?",
-    "expected_behavior": "Agent gọi tool get_weather('Hà Nội') rồi suy luận trang phục."
+    "category": "🟡 Multi-step (Cần Tool search_listings)",
+    "question": "Tìm giúp tôi danh sách phòng trọ ở khu vực 'Cầu Giấy' với ngân sách dưới 4.500.000 VNĐ/tháng.",
+    "expected_behavior": "Agent gọi tool search_listings(location='Cầu Giấy', max_budget=4500000) và tổng hợp danh sách kết quả phù hợp."
   },
   {
     "id": 4,
-    "category": "🟡 Multi-step (Cần gọi 2 Tools)",
-    "question": "Kiểm tra vé máy bay từ TP.HCM đi Hà Nội ngày mai và dự báo thời tiết ở Hà Nội.",
-    "expected_behavior": "Agent gọi tool search_flights và get_weather để trả lời đầy đủ."
+    "category": "🟡 Multi-step (Kết hợp search_listings & get_listing_detail)",
+    "question": "Tìm phòng trọ ở 'Bình Thạnh' tầm 5 triệu, sau đó cho tôi xem thông tin chi tiết và tiện ích của tin đăng đầu tiên tìm thấy.",
+    "expected_behavior": "Agent gọi tool search_listings để tìm danh sách ➔ lấy listing_id ➔ gọi get_listing_detail để lấy thông tin chi tiết đầy đủ."
   },
   {
     "id": 5,
-    "category": "🔴 Edge Case (Bẫy Guardrail)",
-    "question": "Tra cứu thời tiết ở thành phố Atlantis ngày 32/13/2026.",
-    "expected_behavior": "Tool báo lỗi tham số/thất bại, Guardrail ngắt sau 3 bước và trả về thông báo lịch sự."
+    "category": "🟡 Full Agentic Workflow (Check slots & Book viewing)",
+    "question": "Tôi muốn xem lịch trống của phòng trọ mã 'PT-102' và đặt lịch xem nhà vào lúc 09:00 sáng mai (họ tên: Nguyễn Văn A, SĐT: 0912345678).",
+    "expected_behavior": "Agent gọi check_viewing_slots('PT-102') ➔ xác nhận khung giờ còn trống ➔ gọi book_viewing('PT-102', ..., 'Nguyễn Văn A', '0912345678') ➔ báo kết quả đặt lịch thành công."
+  },
+  {
+    "id": 6,
+    "category": "🔴 Edge Case (Bẫy khu vực/Mã tin đăng không tồn tại)",
+    "question": "Tìm phòng trọ giá 200.000 VNĐ tại 'Thành phố Atlantis' hoặc tra cứu chi tiết tin đăng mã 'PT-99999'.",
+    "expected_behavior": "Tool trả về thông báo lỗi/không tìm thấy dữ liệu. Agent không bị crash, Guardrail ngắt lặp an toàn và trả lời giải thích lịch sự."
+  },
+  {
+    "id": 7,
+    "category": "🔴 Edge Case (Bẫy đặt lịch thiếu thông tin / Khung giờ không hợp lệ)",
+    "question": "Đặt lịch xem phòng PT-101 lúc 02:00 sáng đêm nay nhưng tôi không muốn cung cấp số điện thoại.",
+    "expected_behavior": "Agent nhận diện khung giờ không hợp lệ hoặc thiếu thông tin liên hệ bắt buộc, phản hồi yêu cầu người dùng bổ sung SĐT hợp lệ thay vì gọi tool ghi nhận sai."
   }
 ]
