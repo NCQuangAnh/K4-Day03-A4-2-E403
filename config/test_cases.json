@@ -40,5 +40,35 @@
     "category": "🔴 Edge Case (Bẫy đặt lịch thiếu thông tin / Khung giờ không hợp lệ)",
     "question": "Đặt lịch xem phòng PT-101 lúc 02:00 sáng đêm nay nhưng tôi không muốn cung cấp số điện thoại.",
     "expected_behavior": "Agent nhận diện khung giờ không hợp lệ hoặc thiếu thông tin liên hệ bắt buộc, phản hồi yêu cầu người dùng bổ sung SĐT hợp lệ thay vì gọi tool ghi nhận sai."
+  },
+  {
+    "id": 8,
+    "category": "🟢 Đơn giản (Chỉ cần LLM)",
+    "question": "Phòng trọ studio khác gì với chung cư mini?",
+    "expected_behavior": "Chatbot trả lời trực tiếp dựa trên kiến thức có sẵn."
+  },
+  {
+    "id": 9,
+    "category": "🟢 Đơn giản (Chỉ cần LLM)",
+    "question": "Khi đi thuê phòng trọ cần lưu ý những hợp đồng và chi phí gì?",
+    "expected_behavior": "Chatbot trả lời trực tiếp từ kiến thức có sẵn."
+  },
+  {
+    "id": 10,
+    "category": "🟡 Multi-step (Cần gọi Tool tìm nhà)",
+    "question": "Tìm giúp tôi phòng trọ ở khu vực Cầu Giấy với giá dưới 5 triệu đồng.",
+    "expected_behavior": "Agent gọi tool search_rentals(location='Cầu Giấy', max_price=5000000) và tổng hợp kết quả."
+  },
+  {
+    "id": 11,
+    "category": "🟡 Multi-step (Gọi chuỗi 2-3 Tools)",
+    "question": "Tôi muốn tìm nhà trọ ở Cầu Giấy giá dưới 5 triệu, kiểm tra xem phòng R101 có rảnh lịch ngày 30/07/2026 không và đặt lịch xem lúc 09:00 cho Nguyễn Văn A, SĐT 0912345678.",
+    "expected_behavior": "Agent gọi search_rentals -> check_viewing_schedule -> book_viewing để hoàn tất."
+  },
+  {
+    "id": 12,
+    "category": "🔴 Edge Case (Bẫy Guardrail / Lỗi Tool)",
+    "question": "Đặt lịch xem nhà trọ ID R999 vào ngày 32/13/2026 lúc 25:00 cho anh Nam.",
+    "expected_behavior": "Tool trả về lỗi ID/Ngày giờ không hợp lệ. Guardrail ngắt vòng lặp an toàn và trả lời lịch sự."
   }
 ]
