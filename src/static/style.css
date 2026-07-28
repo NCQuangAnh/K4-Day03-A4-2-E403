@@ -1,0 +1,422 @@
+:root {
+  --blue: #2563eb;
+  --blue-dark: #1d4ed8;
+  --blue-soft: #eaf1ff;
+  --blue-border: #c7dbff;
+  --green: #16a34a;
+  --green-dark: #0f9d58;
+  --green-soft: #e8f9ee;
+  --green-border: #b9ebca;
+  --bg: #f7f9fb;
+  --panel: #ffffff;
+  --border: #e4e8ee;
+  --text: #1a1f2b;
+  --text-muted: #6b7385;
+  --orange: #d97706;
+  --orange-soft: #fff7ed;
+  --red: #dc2626;
+  --red-soft: #fef2f2;
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ---------- Top bar ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 28px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon {
+  font-size: 26px;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--blue-soft);
+  border-radius: var(--radius-sm);
+}
+
+.brand-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.brand-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.provider-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--green-soft);
+  color: var(--green-dark);
+  padding: 6px 12px;
+  border: 1px solid var(--green-border);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* ---------- Body layout ---------- */
+.body {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar {
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  padding: 20px 16px;
+  overflow-y: auto;
+}
+
+.sidebar h2 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin: 0 0 12px;
+  font-weight: 700;
+}
+
+.test-case-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.test-case-btn {
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 9px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.test-case-btn:hover {
+  background: var(--blue-soft);
+  border-color: var(--blue-border);
+}
+
+.test-case-btn .cat {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.loading { color: var(--text-muted); font-size: 13px; }
+
+/* ---------- Main ---------- */
+.main {
+  padding: 24px 32px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 880px;
+  width: 100%;
+}
+
+.mode-tabs {
+  display: flex;
+  gap: 6px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px;
+  width: fit-content;
+}
+
+.tab-btn {
+  border: none;
+  background: transparent;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: background 0.15s, color 0.15s;
+}
+
+.tab-btn:hover {
+  color: var(--text);
+}
+
+.tab-btn.active {
+  background: var(--blue);
+  color: #fff;
+  font-weight: 600;
+}
+
+.query-form {
+  display: flex;
+  gap: 10px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px;
+  box-shadow: var(--shadow);
+}
+
+.query-form textarea {
+  flex: 1;
+  border: none;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 14px;
+  padding: 6px;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+}
+
+.query-form button {
+  align-self: flex-end;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.query-form button:hover:not(:disabled) {
+  background: var(--blue-dark);
+}
+
+.query-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.result-area {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.placeholder {
+  color: var(--text-muted);
+  font-size: 14px;
+  padding: 24px;
+  text-align: center;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+}
+
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 800px) {
+  .body { grid-template-columns: 1fr; }
+  .sidebar { border-right: none; border-bottom: 1px solid var(--border); }
+  .compare-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------- Panels ---------- */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+.dot-blue { background: var(--blue); }
+.dot-green { background: var(--green); }
+
+.bubble {
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 14px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  margin-bottom: 10px;
+}
+
+.bubble.question {
+  background: var(--blue-soft);
+  color: var(--blue-dark);
+}
+
+.bubble.answer {
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+
+.bubble.answer.provider-error {
+  background: var(--red-soft);
+  border: 1px solid var(--red);
+  color: #7f1d1d;
+}
+
+/* ---------- Trace timeline ---------- */
+.trace-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.trace-step {
+  display: flex;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  background: var(--bg);
+}
+
+.trace-step.error { border-color: var(--red); background: var(--red-soft); }
+
+.step-badge {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--blue);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.trace-step.error .step-badge { background: var(--red); }
+
+.step-body { flex: 1; font-size: 13px; line-height: 1.5; min-width: 0; }
+
+.step-thought { color: var(--text); margin-bottom: 4px; }
+.step-thought::before { content: "🧠 "; }
+
+.step-action {
+  font-family: "Consolas", monospace;
+  font-size: 12px;
+  background: var(--blue-soft);
+  border: 1px solid var(--blue-border);
+  color: var(--blue-dark);
+  border-radius: 6px;
+  padding: 4px 8px;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+.step-action::before { content: "🛠️ "; }
+
+.step-observation { color: var(--text-muted); }
+.step-observation::before { content: "👁️ "; }
+
+.final-box {
+  background: var(--green-soft);
+  border: 1px solid var(--green-border);
+  color: #14532d;
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 14px;
+  white-space: pre-wrap;
+  line-height: 1.55;
+}
+
+.final-box.guardrail {
+  background: var(--orange-soft);
+  border-color: var(--orange);
+  color: #7c2d12;
+}
+
+.final-box::before {
+  content: "🏁 Final Answer";
+  display: block;
+  font-weight: 700;
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+
+.final-box.guardrail::before {
+  content: "🛡️ GUARDRAIL TRIGGERED — Đã đạt giới hạn vòng lặp an toàn";
+}
+
+.final-box.provider-error {
+  background: var(--red-soft);
+  border-color: var(--red);
+  color: #7f1d1d;
+}
+
+.final-box.provider-error::before {
+  content: "🔌 Lỗi kết nối LLM Provider";
+}
+
+.spinner {
+  color: var(--text-muted);
+  font-size: 14px;
+  padding: 20px;
+  text-align: center;
+}

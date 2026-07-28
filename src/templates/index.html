@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trợ Lý Tìm & Đặt Lịch Xem Nhà Trọ — Test UI</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-icon">🏠</span>
+      <div>
+        <div class="brand-title">Trợ Lý Tìm & Đặt Lịch Xem Nhà Trọ</div>
+        <div class="brand-subtitle">Test UI — Chatbot Baseline vs ReAct Agent</div>
+      </div>
+    </div>
+    <div class="provider-badge" id="providerBadge">🔌 Đang kết nối...</div>
+  </header>
+
+  <div class="body">
+
+    <aside class="sidebar">
+      <h2>Test Cases có sẵn</h2>
+      <div id="testCaseList" class="test-case-list">
+        <p class="loading">Đang tải...</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="mode-tabs">
+        <button class="tab-btn active" data-mode="baseline">💬 Chatbot Baseline</button>
+        <button class="tab-btn" data-mode="agent">🤖 ReAct Agent</button>
+        <button class="tab-btn" data-mode="compare">⚖️ So sánh cả hai</button>
+      </div>
+
+      <form id="queryForm" class="query-form">
+        <textarea id="questionInput" placeholder="Nhập câu hỏi, ví dụ: Tìm giúp tôi phòng trọ ở Cầu Giấy dưới 4.5 triệu..." rows="2"></textarea>
+        <button type="submit" id="sendBtn">Gửi ▶</button>
+      </form>
+
+      <div id="resultArea" class="result-area">
+        <p class="placeholder">Chọn 1 test case bên trái hoặc tự nhập câu hỏi rồi bấm Gửi.</p>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<template id="tpl-baseline">
+  <div class="panel baseline-panel">
+    <div class="panel-header"><span class="dot dot-blue"></span>Chatbot Baseline</div>
+    <div class="bubble question"></div>
+    <div class="bubble answer"></div>
+  </div>
+</template>
+
+<template id="tpl-agent">
+  <div class="panel agent-panel">
+    <div class="panel-header"><span class="dot dot-green"></span>ReAct Agent</div>
+    <div class="bubble question"></div>
+    <div class="trace-timeline"></div>
+    <div class="final-box"></div>
+  </div>
+</template>
+
+<template id="tpl-step">
+  <div class="trace-step">
+    <div class="step-badge"></div>
+    <div class="step-body">
+      <div class="step-thought"></div>
+      <div class="step-action"></div>
+      <div class="step-observation"></div>
+    </div>
+  </div>
+</template>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
