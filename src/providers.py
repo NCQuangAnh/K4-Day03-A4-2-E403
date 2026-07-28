@@ -1,6 +1,6 @@
 """
 🔌 MULTI-PROVIDER LLM ADAPTER (OpenAI, Gemini, Anthropic, OpenRouter & Offline Mock)
-Hỗ trợ chuyển đổi linh hoạt giữa các nhà cung cấp AI chỉ bằng cách đổi biến môi trường LLM_PROVIDER.
+Chủ đề: Trợ Lý Tìm & Đặt Lịch Xem Nhà Trọ / Căn Hộ Cho Thuê
 """
 
 import os
@@ -9,7 +9,6 @@ import json
 import requests
 from dotenv import load_dotenv
 
-# Đảm bảo in ra Tiếng Việt và Emojis không bị lỗi trên Windows Console
 if sys.stdout.encoding != 'utf-8':
     try:
         sys.stdout.reconfigure(encoding='utf-8')
@@ -17,6 +16,7 @@ if sys.stdout.encoding != 'utf-8':
         pass
 
 load_dotenv()
+
 
 class BaseLLMProvider:
     """Interface cơ sở cho tất cả các LLM Provider"""
@@ -47,7 +47,7 @@ class GeminiProvider(BaseLLMProvider):
 
 
 class OpenAIProvider(BaseLLMProvider):
-    """OpenAI Provider (GPT-4o, GPT-3.5-turbo, etc.)"""
+    """OpenAI Provider (GPT-4o, GPT-3.5-turbo)"""
     def __init__(self, api_key: str = None, model: str = None):
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
         self.model_name = model or os.getenv("LLM_MODEL") or "gpt-4o-mini"
@@ -73,7 +73,7 @@ class OpenAIProvider(BaseLLMProvider):
 
 
 class AnthropicProvider(BaseLLMProvider):
-    """Anthropic Claude Provider (Claude 3.5 Sonnet, Claude 3 Haiku)"""
+    """Anthropic Claude Provider"""
     def __init__(self, api_key: str = None, model: str = None):
         self.api_key = api_key or os.getenv("ANTHROPIC_API_KEY")
         self.model_name = model or os.getenv("LLM_MODEL") or "claude-3-haiku-20240307"
@@ -99,7 +99,7 @@ class AnthropicProvider(BaseLLMProvider):
 
 
 class OpenRouterProvider(BaseLLMProvider):
-    """OpenRouter Provider (Hỗ trợ gọi mọi model qua OpenRouter API)"""
+    """OpenRouter Provider"""
     def __init__(self, api_key: str = None, model: str = None):
         self.api_key = api_key or os.getenv("OPENROUTER_API_KEY")
         self.model_name = model or os.getenv("LLM_MODEL") or "google/gemini-2.5-flash"
@@ -132,16 +132,39 @@ class OpenRouterProvider(BaseLLMProvider):
 
 
 class MockProvider(BaseLLMProvider):
-    """Offline Mock Provider (Cho bài test không cần kết nối API)"""
+    """Offline Mock Provider (Giả lập trôi chảy chuỗi 4 bước ReAct cho Đề tài 10)"""
     def generate(self, prompt: str, system_prompt: str = "") -> str:
         text = prompt.lower()
-        if "thời tiết" in text and "hà nội" in text:
-            return "Thought: Cần tra cứu thời tiết Hà Nội.\nAction: get_weather['Hà Nội']"
-        return "🤖 [Mock Provider]: Phản hồi giả lập offline cho bài test."
+        
+        # Cho Baseline Chatbot
+        if "tư vấn thuê nhà trọ thông thường" in system_prompt.lower():
+            return "Tôi là Chatbot tư vấn thông thường. Tôi không có quyền truy cập cơ sở dữ liệu phòng trọ thực tế nên không thể tra cứu hay đặt lịch cho bạn."
+
+        # STEP 4: Sau khi đã đặt lịch hẹn ở Step 3 -> Trả về Final Answer
+        if "Observation: ✅ ĐẶT LỊCH THÀNH CÔNG" in prompt:
+            return (
+                "Thought: Lịch hẹn xem phòng đã được xác nhận thành công vào hệ thống. Tôi đã hoàn thành chuỗi 4 nhiệm vụ.\n"
+                "Final Answer: Đã xem chi tiết, kiểm tra lịch trống và đặt lịch hẹn xem nhà thành công cho anh Nguyễn Văn A (SĐT: 0912345678) tại phòng PT-101 (Cầu Giấy) vào lúc 09:00!"
+            )
+
+        # STEP 3: Sau khi đã có danh sách khung giờ còn trống ở Step 2 -> Gọi book_viewing
+        if "Observation: Khung giờ còn trống" in prompt:
+            return "Thought: Khung giờ 09:00 còn trống. Bây giờ tôi sẽ gọi công cụ book_viewing để đặt lịch xem nhà.\nAction: book_viewing['PT-101', '09:00', 'Nguyễn Văn A', '0912345678']"
+
+        # STEP 2: Sau khi đã có chi tiết phòng ở Step 1 -> Gọi check_viewing_slots
+        if "Observation: Chi tiết PT-101" in prompt:
+            return "Thought: Đã xem xong chi tiết phòng PT-101. Tiếp theo tôi sẽ kiểm tra các khung giờ xem nhà còn trống.\nAction: check_viewing_slots['PT-101']"
+
+        # STEP 1: Sau khi đã tìm thấy danh sách phòng trọ ở Step 0 -> Gọi get_listing_detail
+        if "Observation: Tìm thấy các tin đăng phù hợp" in prompt:
+            return "Thought: Đã tìm thấy danh sách phòng trọ. Tiếp theo tôi sẽ lấy thông tin chi tiết của phòng PT-101.\nAction: get_listing_detail['PT-101']"
+
+        # STEP 0: Ban đầu -> Gọi search_listings
+        return "Thought: Bước 1, tôi cần tìm danh sách phòng trọ tại Cầu Giấy với ngân sách dưới 5 triệu.\nAction: search_listings['Cầu Giấy', 5000000]"
 
 
 def get_llm_provider(provider_name: str = None) -> BaseLLMProvider:
-    """Factory function tự chọn Provider từ biến môi trường LLM_PROVIDER"""
+    """Factory function tự động chọn Provider từ biến môi trường LLM_PROVIDER"""
     name = (provider_name or os.getenv("LLM_PROVIDER") or "mock").lower().strip()
     
     if name == "gemini":
@@ -154,11 +177,3 @@ def get_llm_provider(provider_name: str = None) -> BaseLLMProvider:
         return OpenRouterProvider()
     else:
         return MockProvider()
-
-
-if __name__ == "__main__":
-    print("=== TEST MULTI-PROVIDER LLM ADAPTER ===")
-    provider = get_llm_provider()
-    print(f"✅ Provider đang dùng: {provider.__class__.__name__}")
-    print(f"🤖 User Query: Hello")
-    print(f"💬 Response  : {provider.generate('Hello')}")
