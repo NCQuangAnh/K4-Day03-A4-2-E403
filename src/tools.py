@@ -4,6 +4,22 @@ Nơi khai báo tất cả các "món đồ nghề" mà ReAct Agent có thể g�
 Chủ đề: Trợ Lý Tìm & Đặt Lịch Xem Nhà Trọ / Căn Hộ Cho Thuê
 """
 
+import functools
+
+
+def safe_tool(func):
+    """Lưới an toàn cuối cùng: bắt mọi Exception phát sinh ngoài dự kiến
+    (sai kiểu tham số, thiếu tham số, None...) và trả về chuỗi LỖI thay vì
+    làm crash chương trình, để Agent còn cơ hội đọc lỗi và tự sửa hướng đi."""
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            return f"LỖI: Công cụ '{func.__name__}' nhận tham số không hợp lệ ({e})."
+    return wrapper
+
+
 # Dữ liệu tin đăng mẫu (giả lập database phòng trọ/căn hộ cho thuê)
 _LISTINGS_DB = {
     "PT-101": {"location": "Cầu Giấy", "price": 4200000, "type": "Phòng trọ khép kín",
@@ -25,17 +41,25 @@ _AVAILABLE_SLOTS = {
 _BOOKINGS = []
 
 
-def search_listings(location: str, max_budget: int) -> str:
+@safe_tool
+def search_listings(location: str, max_budget) -> str:
     """
     Tìm phòng trọ/căn hộ theo khu vực và ngân sách tối đa.
 
     Args:
         location (str): Khu vực cần tìm (Ví dụ: 'Cầu Giấy', 'Bình Thạnh')
-        max_budget (int): Ngân sách tối đa mỗi tháng (VNĐ)
+        max_budget (int | str): Ngân sách tối đa mỗi tháng (VNĐ). Chấp nhận cả
+            chuỗi số có dấu chấm/phẩy phân tách (Ví dụ: '4.500.000', '4500000').
 
     Returns:
-        str: Danh sách tin đăng phù hợp (mã tin, giá, loại phòng), hoặc thông báo lỗi nếu không có kết quả.
+        str: Danh sách tin đăng phù hợp (mã tin, giá, loại phòng), hoặc thông báo lỗi nếu
+            không có kết quả hoặc ngân sách không phải là số hợp lệ.
     """
+    try:
+        max_budget = int(str(max_budget).replace(".", "").replace(",", "").strip())
+    except (TypeError, ValueError):
+        return f"LỖI: Ngân sách '{max_budget}' không phải là số hợp lệ."
+
     loc_lower = location.lower().strip()
     matches = [
         f"{listing_id}: {info['type']} tại {info['location']} - {info['price']:,} VNĐ/tháng"
@@ -47,6 +71,7 @@ def search_listings(location: str, max_budget: int) -> str:
     return "Tìm thấy các tin đăng phù hợp:\n" + "\n".join(matches)
 
 
+@safe_tool
 def get_listing_detail(listing_id: str) -> str:
     """
     Lấy thông tin chi tiết của một tin đăng.
@@ -67,6 +92,7 @@ def get_listing_detail(listing_id: str) -> str:
     )
 
 
+@safe_tool
 def check_viewing_slots(listing_id: str) -> str:
     """
     Kiểm tra các khung giờ còn trống để xem nhà của một tin đăng.
@@ -86,6 +112,7 @@ def check_viewing_slots(listing_id: str) -> str:
     return f"Khung giờ còn trống cho {listing_id}: {', '.join(slots)}."
 
 
+@safe_tool
 def book_viewing(listing_id: str, time_slot: str, full_name: str, phone_number: str) -> str:
     """
     Đặt lịch hẹn xem nhà cho một tin đăng vào khung giờ còn trống.
@@ -113,6 +140,7 @@ def book_viewing(listing_id: str, time_slot: str, full_name: str, phone_number: 
     return f"Đặt lịch thành công: {full_name} ({phone_number}) xem nhà '{listing_id}' lúc {time_slot}."
 
 
+@safe_tool
 def cancel_viewing(listing_id: str, time_slot: str) -> str:
     """
     Hủy một lịch hẹn xem nhà đã đặt trước đó.
